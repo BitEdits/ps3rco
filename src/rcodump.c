@@ -387,7 +387,7 @@ void dump_text_resources(char* labels, rRCOEntry* parent, Bool writeHeader, char
 		for(i=0; i<textEntry->numIndexes; i++) {
 			RCOTextIndex* idx = &(textEntry->indexes[i]);
 			uint len = strlen(get_label_from_offset(labels, idx->labelOffset));
-			uint dataLen = 0;
+			size_t dataLen = 0;
 			if(len > MAX_LABEL_LEN) len = MAX_LABEL_LEN;
 			
 			if(idx->length) {
@@ -439,7 +439,7 @@ void dump_text_resources(char* labels, rRCOEntry* parent, Bool writeHeader, char
 				
 				char buf[4096];
 				char* bufOut = buf;
-				uint outBufLen = 4096;
+				size_t outBufLen = 4096;
 				/* {
 					// feed in the BOM (is it really necessary though?)
 					uint number;
@@ -465,7 +465,7 @@ void dump_text_resources(char* labels, rRCOEntry* parent, Bool writeHeader, char
 				} */
 				uint nullsStripped = 0;
 				while(dataLen) {
-					iconv(ic, (&bufIn), (size_t*)(&dataLen), &bufOut, (size_t*)(&outBufLen));
+					iconv(ic, (&bufIn), &dataLen, &bufOut, &outBufLen);
 					if(buf == bufOut) {
 						warning("iconv failed when converting resource '%s'.", get_label_from_offset(labels, idx->labelOffset));
 						break;
