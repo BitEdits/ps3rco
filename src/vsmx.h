@@ -11,7 +11,8 @@
 typedef wchar_t wchar;
 
 #define VSMX_SIGNATURE 0x584D5356 // "VSMX"
-#define VSMX_VERSION 0x00010000
+#define VSMX_VERSION 0x00010000		// found in PSP RCOs
+#define JSX_VERSION 0x00020000		// found on .jsx files for PS3 .raf themes
 PACK_STRUCT(VSMXHeader, {
 	uint32 sig;
 	uint32 ver;

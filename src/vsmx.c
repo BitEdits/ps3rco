@@ -200,7 +200,7 @@ VsmxMem* readVSMX(FILE* fp) {
 	VsmxMem* out;
 	
 	fileread(fp, &header, sizeof(header));
-	if(header.sig != VSMX_SIGNATURE || header.ver != VSMX_VERSION) {
+	if(header.sig != VSMX_SIGNATURE || (header.ver != VSMX_VERSION && header.ver != JSX_VERSION)) {
 		error("Not a valid VSMX file.");
 		return NULL;
 	}
