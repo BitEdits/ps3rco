@@ -11,7 +11,7 @@ AM_CFLAGS = \
 	$(ERROR_CFLAGS) \
 	$(ZLIB_CFLAGS) \
 	$(LIBXML2_CFLAGS) \
-	-DDATADIR='"$(pkgdatadir)"'
+	-DRCOMAGE_DATADIR='"$(pkgdatadir)"'
 
 bin_PROGRAMS = rcomage
 
