@@ -62,7 +62,7 @@ fopen_local (char *fn, char *mode)
 
   if (configDir ||
       ((configDir = getenv("RCOMAGE_DATADIR")) != NULL) ||
-      (is_dir(DATADIR) && (configDir = DATADIR)) ) {
+      (is_dir(RCOMAGE_DATADIR) && (configDir = RCOMAGE_DATADIR)) ) {
     strcpy (path, configDir);
     if (path[strlen (path) - 1] != '/' && path[strlen (path) - 1] != '\\') {
       char sepAdd[2] = { DIR_SEPARATOR, '\0' };
