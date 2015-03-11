@@ -6,9 +6,9 @@
 
 
 #define APPNAME "Rcomage"
-#define APPNAME_VER "Rcomage v1.1.1"
+#define APPNAME_VER "Rcomage v1.1.2"
 #define APPXMLVER 1.10f
-#define APPVER 1.11f
+#define APPVER 1.12f
 
 typedef unsigned int uint; // since "unsigned int" is a pain in the @$$ to type
 
