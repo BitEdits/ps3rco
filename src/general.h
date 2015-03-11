@@ -15,9 +15,9 @@
 #include <stdint.h>
 
 #define APPNAME "Rcomage"
-#define APPNAME_VER "Rcomage v1.1.1"
+#define APPNAME_VER "Rcomage v1.1.2"
 #define APPXMLVER 1.10f
-#define APPVER 1.11f
+#define APPVER 1.12f
 
 #ifndef TRUE
 #define TRUE (uint8_t)1
