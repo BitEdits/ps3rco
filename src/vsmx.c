@@ -36,7 +36,7 @@ int wcscasecmp(const wchar_t *s1, const wchar_t *s2) {
 
 
 enum {
-	VID_NOTHING = 0x0, // dummy
+	VID_NOP = 0x0, // dummy
 	VID_OPERATOR_ASSIGN = 0x1,
 	VID_OPERATOR_ADD = 0x2,
 	VID_OPERATOR_SUBTRACT = 0x3,
@@ -58,7 +58,8 @@ enum {
 	VID_OPERATOR_LTE = 0x13,
 	VID_OPERATOR_GTE = 0x14,
 	VID_OPERATOR_GT = 0x15,
-	
+	VID_OPERATOR_INSTANCEOF = 0x16,
+	VID_OPERATOR_IN = 0x17,
 	VID_OPERATOR_TYPEOF = 0x18,
 	VID_OPERATOR_B_AND = 0x19,
 	VID_OPERATOR_B_XOR = 0x1a,
@@ -68,10 +69,10 @@ enum {
 	VID_OPERATOR_RSHIFT = 0x1e,
 	VID_OPERATOR_URSHIFT = 0x1f,
 	VID_STACK_PUSH = 0x20,
-	
+	// VID_SWAP = 0x21,
 	VID_END_STMT = 0x22,
-	VID_CONST_NULL = 0x23,
-	VID_CONST_EMPTYARRAY = 0x24,
+	VID_CONST_NULL = 0x23, // undefined
+	VID_CONST_EMPTYARRAY = 0x24, // null
 	VID_CONST_BOOL = 0x25,
 	VID_CONST_INT = 0x26,
 	VID_CONST_FLOAT = 0x27,
@@ -84,13 +85,13 @@ enum {
 	VID_VARIABLE = 0x2e,
 	VID_PROPERTY = 0x2f,
 	VID_METHOD = 0x30,
-	VID_UNK_31 = 0x31, // appears to be an object set; pops last two items off the stack
+	VID_UNK_31 = 0x31, // appears to be an object set; pops last two items off the stack; Sony's ASM = "SETATTR"
 	VID_UNSET = 0x32, // guess; looks like above, but only with one item
 	VID_OBJ_ADD_ATTR = 0x33,
 	VID_ARRAY_INDEX = 0x34,
-	
+	// GETITEM_KEEPOBJ = 0x35,
 	VID_ARRAY_INDEX_ASSIGN = 0x36,
-	
+	// DELITEM = 0x37,
 	VID_ARRAY_ELEM = 0x38, // push something into array constant
 	VID_SECT_START = 0x39, // jump statement; can indicate end of function, end of else/for, or return to beginning of loop
 	VID_JUMP_TRUE = 0x3a, // jump if previous value is true
@@ -99,16 +100,25 @@ enum {
 	VID_CALL_METHOD = 0x3d,
 	VID_CALL_NEW = 0x3e,
 	VID_RETURN = 0x3f,
-
+	VID_THROW = 0x40,
+	VID_TRY_START = 0x41,
+	VID_TRY_END = 0x42,
+	VID_TRY_CATCH_START = 0x43,
+	VID_TRY_CATCH_END = 0x44,
 	VID_END = 0x45,
 	VID_DEBUG_FILE = 0x46,
 	VID_DEBUG_LINE = 0x47,
-
-	VID_MAKE_FLOAT_ARRAY = 0x49 // weird??
+	// GETITEM_KEEPOBJNAME = 0x48,
+	VID_CONST_VECTOR = 0x49
+	// GET_VECTOR_ELEMENT
+	// GET_VECTOR_ELEMENT_KEEPVECTOR
+	// ASSGN_VECTOR_ELEMENT
+	// SETATTR_VECTOR_ELEMENT
+	// SETITEM_VECTOR_ELEMENT
 };
 
 const wchar VsmxDecOps[][50] = {
-	L"UNKNOWN_0",
+	L"NOP",
 	L"ASSIGN",
 	L"ADD",
 	L"SUBTRACT",
@@ -130,8 +140,8 @@ const wchar VsmxDecOps[][50] = {
 	L"TEST_LESS_EQUAL_THAN",
 	L"TEST_MORE_EQUAL_THAN",
 	L"TEST_MORE_THAN",
-	L"UNKNOWN_16",
-	L"UNKNOWN_17",
+	L"INSTANCEOF",
+	L"IN",
 	L"TYPEOF",
 	L"BINARY_AND",
 	L"BINARY_XOR",
@@ -181,7 +191,7 @@ const wchar VsmxDecOps[][50] = {
 	L"DEBUG_FILE",
 	L"DEBUG_LINE",
 	L"UNKNOWN_48",
-	L"MAKE_FLOAT_ARRAY"
+	L"MAKE_VECTOR"
 };
 const unsigned int VSMX_NUM_DEC_OPS = 0x49+1;
 
@@ -567,7 +577,7 @@ int VsmxDecode(VsmxMem* in, FILE* out) {
 				fwprintf(out, L" args=%u", in->code[i].val.u32);
 			break;
 			
-			case VID_MAKE_FLOAT_ARRAY:
+			case VID_CONST_VECTOR:
 				fwprintf(out, L" items=%u", in->code[i].val.u32);
 				break;
 			
@@ -594,6 +604,8 @@ int VsmxDecode(VsmxMem* in, FILE* out) {
 			case VID_OPERATOR_LTE:
 			case VID_OPERATOR_GT:
 			case VID_OPERATOR_GTE:
+			case VID_OPERATOR_INSTANCEOF:
+			case VID_OPERATOR_IN:
 			case VID_OPERATOR_B_AND:
 			case VID_OPERATOR_B_XOR:
 			case VID_OPERATOR_B_OR:
@@ -620,7 +632,7 @@ int VsmxDecode(VsmxMem* in, FILE* out) {
 			
 			default:
 				warning("Unknown ID 0x%x at line %d", in->code[i].id, i+1);
-				fwprintf(out, L" 0x%x", in->code[i].id, in->code[i].val.u32);
+				fwprintf(out, L" 0x%x", in->code[i].u32);
 		}
 		fputwc(L'\n', out);
 	}
@@ -809,7 +821,7 @@ VsmxMem* VsmxEncode(FILE* in) {
 				swscanf(arg, L"args=%u", &argNum);
 			break;
 			
-			case VID_MAKE_FLOAT_ARRAY:
+			case VID_CONST_VECTOR:
 				swscanf(arg, L"items=%u", &argNum);
 			break;
 			
@@ -836,6 +848,8 @@ VsmxMem* VsmxEncode(FILE* in) {
 			case VID_OPERATOR_LTE:
 			case VID_OPERATOR_GT:
 			case VID_OPERATOR_GTE:
+			case VID_OPERATOR_INSTANCEOF:
+			case VID_OPERATOR_IN:
 			case VID_OPERATOR_B_AND:
 			case VID_OPERATOR_B_XOR:
 			case VID_OPERATOR_B_OR:
@@ -1088,6 +1102,8 @@ int VsmxDecompile(VsmxMem* in, FILE* out) {
 			case VID_OPERATOR_LTE:			if(!op[0]) wcscpy(op, L"<=");
 			case VID_OPERATOR_GT:			if(!op[0]) wcscpy(op, L">");
 			case VID_OPERATOR_GTE:			if(!op[0]) wcscpy(op, L">=");
+			case VID_OPERATOR_INSTANCEOF:	if(!op[0]) wcscpy(op, L"instanceof");
+			case VID_OPERATOR_IN:			if(!op[0]) wcscpy(op, L"in");
 			case VID_OPERATOR_B_AND:		if(!op[0]) wcscpy(op, L"&");
 			case VID_OPERATOR_B_XOR:		if(!op[0]) wcscpy(op, L"^");
 			case VID_OPERATOR_B_OR:			if(!op[0]) wcscpy(op, L"|");
@@ -1220,7 +1236,7 @@ int VsmxDecompile(VsmxMem* in, FILE* out) {
 			} break;
 			
 			
-			case VID_MAKE_FLOAT_ARRAY:
+			case VID_CONST_VECTOR:
 			{
 				VsmxDecompileStack *prev;
 				uint j;
@@ -1236,9 +1252,9 @@ int VsmxDecompile(VsmxMem* in, FILE* out) {
 						SWPRINTF_ITEM(" %ls ", prev->str);
 					free(prev);
 				}
-				wcscat(item.str, L"]");
-				wcsprecat(item.str, L"[", MAX_TEXT_LEN);
-				// SWPRINTF_ITEM("[%ls]", item.str);
+				wcscat(item.str, L">");
+				wcsprecat(item.str, L"<", MAX_TEXT_LEN);
+				// SWPRINTF_ITEM("<%ls>", item.str);
 				VsmxDecompileStackPush(&stack, &item);
 			} break;
 			
@@ -1333,7 +1349,7 @@ int VsmxDecompile(VsmxMem* in, FILE* out) {
 				if(in->code[i].id >> 16 & 0xFF) {
 					warning("Unexpected flag value for function at %d, expected 0, got %d", i, in->code[i].id >> 16 & 0xFF);
 				}
-				SWPRINTF(args, 4096, L"/*flag=%d*/", in->code[i].id >> 24);
+				SWPRINTF(args, 4096, L"/*localvars=%d*/", in->code[i].id >> 24);
 				if(numArgs) wcscat(args, L" ");
 				
 				for(argI = 0; argI < numArgs; argI++) {
@@ -1664,9 +1680,11 @@ int VsmxDecompile(VsmxMem* in, FILE* out) {
 				}
 			break;
 			
-			// ignore debugging stuff
 			case VID_DEBUG_FILE:
 			case VID_DEBUG_LINE:
+				// TODO: stick in debugging comments
+			// ignore NOP
+			case VID_NOP:
 			break;
 			
 			default:
