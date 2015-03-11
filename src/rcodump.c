@@ -593,7 +593,7 @@ compile_gimconv_map (rRCOFile * rco, rRCOEntry * entry, void *arg)
       extFlags = gimconvSwpCmd;
       if (opts->extFlags) {
 	strcat (extFlags, " ");
-	strcat (extFlags, gimconvSwpCmd);
+	strcat (extFlags, opts->extFlags);
       }
     }
     if (exec_gimconv (opts->cmd, entry->srcFile, tmpName, extFlags)) {
