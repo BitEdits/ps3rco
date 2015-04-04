@@ -2,8 +2,7 @@
 
 #include "DeflateEncoder.h"
 
-extern "C" int compress_deflate_7z(const unsigned char* in_data, unsigned in_size,
-				    unsigned char* out_data, unsigned *out_size, unsigned num_passes, unsigned num_fast_bytes)
+extern "C" int compress_deflate_7z(const unsigned char* in_data, unsigned in_size, unsigned char* out_data, unsigned *out_size, unsigned num_passes, unsigned num_fast_bytes)
 {
 		NDeflate::NEncoder::CCoder cc;
 
