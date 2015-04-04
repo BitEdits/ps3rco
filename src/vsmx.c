@@ -7,7 +7,7 @@
 #include "vsmx.h"
 
 
-#if defined(MINGW) || defined(_MSC_VER) // lack of wcscasecmp
+#ifndef wcscasecmp
 #include <wctype.h>
 int wcscasecmp(const wchar_t *s1, const wchar_t *s2) {
 	while(*s1 && *s2) {
@@ -632,7 +632,7 @@ int VsmxDecode(VsmxMem* in, FILE* out) {
 			
 			default:
 				warning("Unknown ID 0x%x at line %d", in->code[i].id, i+1);
-				fwprintf(out, L" 0x%x", in->code[i].u32);
+				fwprintf(out, L" 0x%x", in->code[i].val.u32);
 		}
 		fputwc(L'\n', out);
 	}
