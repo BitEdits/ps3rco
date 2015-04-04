@@ -3,7 +3,7 @@
 #define __VSMX_H__
 
 
-#ifndef __GNU_C__
+#ifdef _MSC_VER
 #pragma pack(push, 4)
 #pragma pack(1)
 #endif
@@ -41,7 +41,7 @@ PACK_STRUCT(VSMXGroup, {
 	} val;
 });
 
-#ifndef __GNU_C__
+#ifdef _MSC_VER
 #pragma pack(pop)
 #endif
 

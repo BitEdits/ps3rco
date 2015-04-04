@@ -245,7 +245,7 @@ void es_extraObjAnim(Bool isObj, int type, void* data, Bool isPS3);
 
 
 
-#ifndef __GNU_C__
+#ifdef _MSC_VER
 #pragma pack(push, 4)
 #pragma pack(1)
 #endif
@@ -601,7 +601,7 @@ PACK_STRUCT(RCOAnimSSlideout, {
 });
 */
 
-#ifndef __GNU_C__
+#ifdef _MSC_VER
 #pragma pack(pop)
 #endif
 

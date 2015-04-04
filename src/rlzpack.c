@@ -4,7 +4,7 @@
 #include <math.h>
 #include <stdio.h>
 
-#ifndef __GNU_C__ // MSVC
+#ifdef _MSC_VER // MSVC
 typedef __int64 int64_t;
 #else
 #include <stdint.h>

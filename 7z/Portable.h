@@ -2,7 +2,7 @@
 #define __PORTABLE_H
 
 #include <string.h>
-#ifndef __GNU_C__ // MSVC
+#ifdef _MSC_VER
 typedef __int16 INT16;
 typedef unsigned __int16 UINT16;
 typedef __int32 INT32;

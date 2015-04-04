@@ -47,7 +47,7 @@ extern Bool quietMode;
 #define ALIGN_TO_4(n) (((n) + 3) & (~3))
 //#define ALIGN_TO_4(n) (((n) + 3) >>2 <<2) // problem: upper 2 bits gets wiped too
 
-#ifndef __GNU_C__
+#ifdef _MSC_VER
 typedef unsigned __int8 uint8;
 typedef __int8 int8;
 typedef unsigned __int16 uint16;
@@ -70,7 +70,7 @@ typedef int32_t int32;
 #define UTF16_BOM ((uint16) 0xFEFF)
 #define UTF32_BOM ((uint32) 0x0000FEFF)
 
-#ifndef __GNU_C__ /* msvc */
+#ifdef _MSC_VER /* msvc */
 #define PACK_STRUCT(nam, struc) typedef struct struc nam
 // need to use pragma directives whenever we use it...
 #else /* gcc */
@@ -92,14 +92,6 @@ Bool is_prime(uint in);
 
 void get_temp_fname(char* out, const char* ext);
 
-/*
-#ifndef Z_OK
-#define Z_OK 0
-#endif
-#ifndef Z_DATA_ERROR
-#define Z_DATA_ERROR -3
-#endif
-*/
 #define Z_USE_7Z 10
 
 #ifdef WIN32
