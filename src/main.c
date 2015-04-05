@@ -222,6 +222,8 @@ int main_help() {
 		}
 		
 		else if(!strcasecmp(app_argv[2], "extract")) {
+			configLoadMiscmap();
+			
 			printf("Syntax: %s extract <rcofile> <resource> [<output>] [options]\n", app_argv[0]);
 			printf("  Extracts a single resource (image/sound/model/VSMX/text) with label\n"
 			 "  <resource> and saves it to <output>.  If <output> is not specified, will default\n"
