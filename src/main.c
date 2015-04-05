@@ -222,6 +222,9 @@ int main_help() {
 		}
 		
 		else if(!strcasecmp(app_argv[2], "extract")) {
+			retrieve_from_opts(FALSE, 1,
+				"--ini-dir",	"string", &configDir
+			);
 			configLoadMiscmap();
 			
 			printf("Syntax: %s extract <rcofile> <resource> [<output>] [options]\n", app_argv[0]);
