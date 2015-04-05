@@ -1,0 +1,39 @@
+
+CC = g++
+CFLAGS = -Wall -flto -I. -DRCOMAGE_DATADIR='""' `pkg-config --cflags libxml-2.0` `pkg-config --cflags zlib`
+
+LIBS = -lm $(LIBXML2) `pkg-config --libs zlib` 
+# because MinGW's libxml2 is stuffed, use our own
+#LIBS += -liconv `pkg-config --libs libxml-2.0`
+# replace -liconv with -lglib on linux
+LIBS += libxml2/libxml2.a iconv/iconv.o iconv/localcharset.o
+TARGET = rcomage
+#SEVENZSRC = 7z/7zdeflate.cc 7z/7zlzma.cc 7z/AriBitCoder.cc 7z/CRC.cc 7z/DeflateDecoder.cc 7z/DeflateEncoder.cc 7z/HuffmanEncoder.cc 7z/IInOutStreams.cc 7z/InByte.cc 7z/LenCoder.cc 7z/LiteralCoder.cc 7z/LSBFDecoder.cc 7z/LSBFEncoder.cc 7z/LZMA.cc 7z/LZMADecoder.cc 7z/LZMAEncoder.cc 7z/OutByte.cc 7z/WindowIn.cc 7z/WindowOut.cc
+SEVENZSRC = 7z/7zdeflate.cc 7z/CRC.cc 7z/DeflateEncoder.cc 7z/HuffmanEncoder.cc 7z/IInOutStreams.cc 7z/LSBFEncoder.cc 7z/OutByte.cc 7z/WindowIn.cc
+SRC = src/general.c src/globdefs.c src/main.c src/rcodump.c src/rcomain.c src/rcoreader.c src/rcowriter.c src/rlzpack.c src/vaghandler.c src/xmlread.c src/xmlwrite.c src/vsmx.c src/configscan.c
+_OBJ = $(SRC:.c=.o)
+OBJ = $(_OBJ:src/%=%)
+SEVENZOBJ = $(SEVENZSRC:.cc=.o)
+
+ifeq ($(DEBUG), 1)
+CFLAGS += -g
+LIBS += -g
+else
+CFLAGS += -O2
+endif
+
+COMPILE = $(CC) $(CFLAGS)
+
+all: $(TARGET)
+$(TARGET): $(OBJ) $(SEVENZOBJ)
+	$(CC) -s -static -flto -o $@ $^ $(LIBS)
+
+$(SEVENZOBJ):
+	cd 7z && make -f Makefile.win32 all
+	cd ..
+
+%.o:src/%.c
+	$(COMPILE) -c $<
+
+clean:
+	rm -f $(OBJ) $(SEVENZOBJ)
