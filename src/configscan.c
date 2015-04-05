@@ -175,19 +175,17 @@ void configLoadObjmap(Bool ps3) {
 		char buf[INI_LINE_BUF_LEN];
 		char *key, *val;
 		int type;
-		int id = -1, id2 = -1, lenAdd=0;
+		int id = -1, id2 = -1;
 		while((type = get_ini_line(fp, buf, &key, &val))) {
 			if(type == 1) {
 				id++;
 				RCO_OBJ_EXTRA_LEN = (int*)realloc(RCO_OBJ_EXTRA_LEN, sizeof(int) * (id+1));
-				//RCO_OBJ_EXTRA_LEN[id] = id2 + lenAdd;
 				RCO_OBJ_EXTRA_LEN[id] = 0;
 				RCO_OBJ_EXTRA_NAMES = (RcoObjMap)realloc(RCO_OBJ_EXTRA_NAMES, sizeof(*RCO_OBJ_EXTRA_NAMES) * (id+1));
 				RCO_OBJ_EXTRA_NAMES[id][0][0] = 0;
 				RCO_OBJ_EXTRA_TYPES = (RcoObjTypes)realloc(RCO_OBJ_EXTRA_TYPES, sizeof(*RCO_OBJ_EXTRA_TYPES) * (id+1));
 				RCO_OBJ_EXTRA_TYPES[id][0] = 0;
 				id2 = -1;
-				lenAdd = 0;
 			} else {
 				id2++;
 				RCO_OBJ_EXTRA_LEN[id]++;
@@ -223,7 +221,6 @@ void configLoadObjmap(Bool ps3) {
 				if(RCO_OBJ_IS_REF(id, id2)) RCO_OBJ_EXTRA_LEN[id]++;
 			}
 		}
-		//RCO_OBJ_EXTRA_LEN[id+1] = id2 + lenAdd;
 		fclose(fp);
 		RCO_OBJ_EXTRA_LEN_NUM = id+1;
 	} else {
@@ -240,7 +237,7 @@ void configLoadAnimmap(Bool ps3) {
 		char buf[INI_LINE_BUF_LEN];
 		char *key, *val;
 		int type;
-		int id = -1, id2 = -1, lenAdd=0;
+		int id = -1, id2 = -1;
 		while((type = get_ini_line(fp, buf, &key, &val))) {
 			if(type == 1) {
 				id++;
@@ -251,7 +248,6 @@ void configLoadAnimmap(Bool ps3) {
 				RCO_ANIM_EXTRA_TYPES = (RcoObjTypes)realloc(RCO_ANIM_EXTRA_TYPES, sizeof(*RCO_ANIM_EXTRA_TYPES) * (id+1));
 				RCO_ANIM_EXTRA_TYPES[id][0] = 0;
 				id2 = -1;
-				lenAdd = 0;
 			} else {
 				id2++;
 				RCO_ANIM_EXTRA_LEN[id]++;

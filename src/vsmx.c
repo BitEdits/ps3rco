@@ -28,7 +28,7 @@ int wcscasecmp(const wchar_t *s1, const wchar_t *s2) {
 
 
 // since swprintf seems to accept different arguments...
-#ifdef MINGW
+#if defined(MINGW) || defined(__MINGW32__)
 #define SWPRINTF(s, l, f, ...) swprintf(s, f, __VA_ARGS__)
 #else
 #define SWPRINTF(s, l, f, ...) swprintf(s, l, f, __VA_ARGS__)
@@ -1007,7 +1007,7 @@ int VsmxDecompile(VsmxMem* in, FILE* out) {
 	VsmxDecompMarkStack mItem;
 	uint endStmtConcat = 1;
 	
-	uint forStmtEnd = 0;
+	//uint forStmtEnd = 0;
 	
 	
 	fputws(L"// Decompiled VSMX -> Javascript output by " APPNAME_VER "\n//Note, this is highly experimental and the output probably sucks.\n\n", out);
@@ -1143,7 +1143,7 @@ int VsmxDecompile(VsmxMem* in, FILE* out) {
 				VsmxDecompileStack *prev;
 				prev = VsmxDecompileStackPop(&stack);
 				//swprintf(item.str, MAX_TEXT_LEN, L"-(%s)", prev->str);
-				if(in->code[i].id & 0xFF == VID_P_INCREMENT || in->code[i].id & 0xFF == VID_P_DECREMENT)
+				if((in->code[i].id & 0xFF) == VID_P_INCREMENT || (in->code[i].id & 0xFF) == VID_P_DECREMENT)
 					SWPRINTF_ITEM ("%ls(%ls)", op, prev->str);
 				else
 					SWPRINTF_ITEM ("(%ls)%ls", prev->str, op);
@@ -1506,7 +1506,7 @@ int VsmxDecompile(VsmxMem* in, FILE* out) {
 					SWPRINTF_ITEM("for(; %ls /* jump to %d */; ", prev->str, in->code[i].val.u32);
 					VsmxDecompileStackPush(&stack, &item);
 					
-					forStmtEnd = in->code[i].val.u32;
+					//forStmtEnd = in->code[i].val.u32;
 					// push for end marker of loop
 					mItem.src = i+1;
 					mItem.loc = in->code[i+1].val.u32;
