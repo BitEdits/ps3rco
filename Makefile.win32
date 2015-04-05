@@ -1,8 +1,8 @@
 
-CC = g++
+CC = gcc
 CFLAGS = -Wall -flto -I. -DRCOMAGE_DATADIR='""' `pkg-config --cflags libxml-2.0` `pkg-config --cflags zlib`
 
-LIBS = -lm $(LIBXML2) `pkg-config --libs zlib` 
+LIBS = -lm -lstdc++ $(LIBXML2) `pkg-config --libs zlib` 
 # because MinGW's libxml2 is stuffed, use our own
 #LIBS += -liconv `pkg-config --libs libxml-2.0`
 # replace -liconv with -lglib on linux
