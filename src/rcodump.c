@@ -512,16 +512,11 @@ void compile_gimconv_map(rRCOFile* rco, rRCOEntry* entry, void* arg) {
 		RcoDumpGimconvOpts* opts = (RcoDumpGimconvOpts*)arg;
 		char tmpName[255];
 		get_temp_fname(tmpName, "gim");
-		char gimconvSwpCmd[255] = "-ps3";
-		char* extFlags = opts->extFlags;
-		if(rco->eSwap) {
-			extFlags = gimconvSwpCmd;
-			if(opts->extFlags) {
-				strcat(extFlags, " ");
-				strcat(extFlags, opts->extFlags);
-			}
-		}
-		if(exec_gimconv(opts->cmd, entry->srcFile, tmpName, extFlags)) {
+		char gimconvArgs[255] = "-psp ";
+		if(rco->eSwap) gimconvArgs[3] = '3'; // -ps3
+		if(opts->extFlags)
+			strcat(gimconvArgs, opts->extFlags);
+		if(exec_gimconv(opts->cmd, entry->srcFile, tmpName, gimconvArgs)) {
 			FILE* fp = fopen(tmpName, "rb");
 			if(fp) {
 				entry->srcLen = entry->srcLenUnpacked = filesize(tmpName);
