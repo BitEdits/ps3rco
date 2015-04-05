@@ -106,27 +106,27 @@ Bool dump_output_gimconv(char* dest, void* buf, rRCOEntry* entry, void* arg) {
 			i32 = (uint32*)buf;
 			if(*i32 == 0x4D49472E) es = TRUE; // .GIM
 			
-			if(*i32 == 0x2E47494D || *i32 == 0x4D49472E) {
-				uint16 i, i2;
-				i = *(uint16*)((char*)buf + 0x10);
-				i2 = *(uint16*)((char*)buf + 0x20);
+			if(*i32 == 0x2E47494D /*.GIM*/ || *i32 == 0x4D49472E /*MIG.*/) {
+				uint16 chunk1type, chunk2type;
+				chunk1type = *(uint16*)((char*)buf + 0x10);
+				chunk2type = *(uint16*)((char*)buf + 0x20);
 				if(es) {
-					i = ENDIAN_SWAP(i);
-					i2 = ENDIAN_SWAP(i2);
+					chunk1type = ENDIAN_SWAP(chunk1type);
+					chunk2type = ENDIAN_SWAP(chunk2type);
 				}
-				if(i == 2 && i2 == 3) {
-					uint32 sz = *(uint32*)((char*)buf + 0x14), sz2;
+				if(chunk1type == 2 && chunk2type == 3) {
+					uint32 chunk1size = *(uint32*)((char*)buf + 0x14), chunk2size;
 					i32 = (uint32*)((char*)buf + 0x24);
-					sz2 = *i32;
+					chunk2size = *i32;
 					if(es) {
-						sz = ENDIAN_SWAP(sz);
-						sz2 = ENDIAN_SWAP(sz2);
+						chunk1size = ENDIAN_SWAP(chunk1size);
+						chunk2size = ENDIAN_SWAP(chunk2size);
 					}
-					if(sz-0x10 != sz2) {
+					if(chunk1size-0x10 != chunk2size) {
 						info("Note: Applied GIM patch when using GimConv to dump '%s'.", dest);
-						sz2 = sz-0x10;
-						if(es) sz2 = ENDIAN_SWAP(sz2);
-						*i32 = sz2;
+						chunk2size = chunk1size-0x10;
+						if(es) chunk2size = ENDIAN_SWAP(chunk2size);
+						*i32 = chunk2size;
 					}
 				}
 			}
