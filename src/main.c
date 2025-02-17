@@ -360,7 +360,7 @@ main_help ()
 int
 main_dump (void)
 {
-  if (app_argc < 4)
+  if (app_argc < 3)
     MAIN_INV_CMD_SYNTAX;
 
   char *sRcoFile = NULL;
@@ -401,15 +401,9 @@ main_dump (void)
   }
 #endif
 
-  for (i = 2; i < app_argc; i++) {
-    if (!app_argv[i])
-      continue;
-    if (!sRcoFile)
-      sRcoFile = app_argv[i];
-    else if (!sXmlFile)
-      sXmlFile = app_argv[i];
-    else
-      MAIN_INV_CMD_SYNTAX}
+    if (!sRcoFile) sRcoFile = app_argv[2];
+    if (!sXmlFile) sXmlFile = app_argv[3];
+
     if (!sRcoFile || !sXmlFile)
     MAIN_INV_CMD_SYNTAX if (gimconvOpts.ext && strlen (gimconvOpts.ext) > 5) {
       gimconvOpts.ext[5] = '\0';	// prevent buffer overflow
